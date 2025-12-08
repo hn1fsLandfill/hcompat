@@ -4,6 +4,10 @@
 
 // #pragma comment(linker, "/export:SystemParametersInfoForDpi=kernelbase.SystemParametersInfoW")
 
+WINUSERAPI BOOL IsWindowArranged(HWND hwnd) {
+    return FALSE;
+}
+
 // wtf x86 msvc
 #ifndef _M_X64
 #pragma comment(linker, "/export:GetDpiForWindow=_e_GetDpiForWindow")
