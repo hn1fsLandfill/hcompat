@@ -7,12 +7,12 @@
 #pragma comment(linker, "/export:ReclaimVirtualMemory=kernelbase.ReclaimVirtualMemory")
 
 #ifndef _M_X64
-#pragma comment(linker, "/export:SetThreadDescription=_h_SetThreadDescription")
+#pragma comment(linker, "/export:SetThreadDescription=_e_SetThreadDescription")
 #else
-#pragma comment(linker, "/export:SetThreadDescription=h_SetThreadDescription")
+#pragma comment(linker, "/export:SetThreadDescription=e_SetThreadDescription")
 #endif
 
-HRESULT h_SetThreadDescription(
+HRESULT e_SetThreadDescription(
   HANDLE hThread,
   PCWSTR lpThreadDescription
 ) {
@@ -20,12 +20,12 @@ HRESULT h_SetThreadDescription(
 }
 
 #ifndef _M_X64
-#pragma comment(linker, "/export:IsWow64Process2=_h_IsWow64Process2")
+#pragma comment(linker, "/export:IsWow64Process2=_e_IsWow64Process2")
 #else
-#pragma comment(linker, "/export:IsWow64Process2=h_IsWow64Process2")
+#pragma comment(linker, "/export:IsWow64Process2=e_IsWow64Process2")
 #endif
 
-BOOL h_IsWow64Process2(
+BOOL e_IsWow64Process2(
   HANDLE hProcess,
   USHORT *pProcessMachine,
   USHORT *pNativeMachine
@@ -36,7 +36,7 @@ BOOL h_IsWow64Process2(
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  reason, LPVOID lpReserved)
 {
     if (reason == DLL_PROCESS_ATTACH) {
-        
+
     }
     return TRUE;
 }

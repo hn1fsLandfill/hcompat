@@ -3,10 +3,6 @@
 
 // #pragma comment(linker, "/export:SystemParametersInfoForDpi=kernelbase.SystemParametersInfoW")
 
-BOOL e_IsWindowArranged(HWND hwnd) {
-    return FALSE;
-}
-
 // wtf x86 msvc
 #ifndef _M_X64
 #pragma comment(linker, "/export:GetDpiForWindow=_e_GetDpiForWindow")
@@ -71,7 +67,7 @@ BOOL e_EnableNonClientDpiScaling(HWND hwnd) {
 #ifndef _M_X64
 #pragma comment(linker, "/export:AreDpiAwarenessContextsEqual=_e_AreDpiAwarenessContextsEqual")
 #else
-#pragma comment(linker, "/export:SystemParametersInfoForDpi=e_SystemParametersInfoForDpi")
+#pragma comment(linker, "/export:AreDpiAwarenessContextsEqual=e_AreDpiAwarenessContextsEqual")
 #endif
 
 BOOL e_AreDpiAwarenessContextsEqual(DPI_AWARENESS_CONTEXT dpiContextA, DPI_AWARENESS_CONTEXT dpiContextB) {
@@ -137,6 +133,30 @@ BOOL e_SetDialogDpiChangeBehavior(
     DIALOG_DPI_CHANGE_BEHAVIORS values
 ) {
     return TRUE;
+}
+
+#ifndef _M_X64
+#pragma comment(linker, "/export:SetProcessDpiAwarenessContext=_e_SetProcessDpiAwarenessContext")
+#else
+#pragma comment(linker, "/export:SetProcessDpiAwarenessContext=e_SetProcessDpiAwarenessContext")
+#endif
+
+BOOL e_SetProcessDpiAwarenessContext(
+  DPI_AWARENESS_CONTEXT value
+) {
+    SetLastError(ERROR_ACCESS_DENIED);
+    return FALSE;
+}
+
+
+#ifndef _M_X64
+#pragma comment(linker, "/export:IsWindowArranged=_e_IsWindowArranged")
+#else
+#pragma comment(linker, "/export:IsWindowArranged=e_IsWindowArranged")
+#endif
+
+BOOL e_IsWindowArranged(HWND hwnd) {
+    return FALSE;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  reason, LPVOID lpReserved)
