@@ -1,12 +1,8 @@
 #include <windows.h>
+#include <shared.h>
 #include "exports.h"
 
-#ifndef _M_X64
-#pragma comment(linker, "/export:UiaRaiseNotificationEvent=_e_UiaRaiseNotificationEvent")
-#else
-#pragma comment(linker, "/export:UiaRaiseNotificationEvent=e_UiaRaiseNotificationEvent")
-#endif
-
+#pragma export("UiaRaiseNotificationEvent")
 HRESULT e_UiaRaiseNotificationEvent(
     void *provider,
     void *notificationKind,

@@ -1,13 +1,9 @@
 #include <windows.h>
+#include <shared.h>
 #include "exports.h"
 
-#ifndef _M_X64
-#pragma comment(linker, "/export:CompareObjectHandles=_e_CompareObjectHandles")
-#else
-#pragma comment(linker, "/export:CompareObjectHandles=e_CompareObjectHandles")
-#endif
-
 // maybe find a better way to check?
+#pragma export("CompareObjectHandles")
 BOOL e_CompareObjectHandles(
   HANDLE hFirstObjectHandle,
   HANDLE hSecondObjectHandle

@@ -1,13 +1,9 @@
 #include <windows.h>
+#include <shared.h>
 #include "exports.h"
 #include "dpi.h"
 
-#ifndef _M_X64
-#pragma comment(linker, "/export:IsWindowArranged=_e_IsWindowArranged")
-#else
-#pragma comment(linker, "/export:IsWindowArranged=e_IsWindowArranged")
-#endif
-
+#pragma export("IsWindowArranged")
 BOOL e_IsWindowArranged(HWND hwnd) {
     return FALSE;
 }

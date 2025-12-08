@@ -1,12 +1,8 @@
 #include <windows.h>
+#include <shared.h>
 #include "exports.h"
 
-#ifndef _M_X64
-#pragma comment(linker, "/export:DCompositionCreateDevice3=_e_DCompositionCreateDevice3")
-#else
-#pragma comment(linker, "/export:DCompositionCreateDevice3=e_DCompositionCreateDevice3")
-#endif
-
+#pragma export("DCompositionCreateDevice3")
 HRESULT e_DCompositionCreateDevice3(
 	void	*RenderingDevice,
 	REFIID	RefIID,
