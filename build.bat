@@ -14,6 +14,7 @@ cl /I ..\..\common ..\..\mswin\version\base.c /link version.lib /DLL /out:api-ms
 cl /I ..\..\common ..\..\mswin\libraryloader\base.c /link kernel32.lib /DLL /out:api-ms-win-core-realtime-l1-1-1.dll || goto fail
 cl /I ..\..\common ..\..\mswin\heap\base.c /link kernel32.lib /DLL /out:api-ms-win-core-heap-l2-1-0.dll || goto fail
 cl /I ..\..\common ..\..\mswin\realtime\base.c /link kernel32.lib /DLL /out:api-ms-win-core-realtime-l1-1-1.dll || goto fail
+cl /I ..\..\common ..\..\mswin\localization\base.c /link kernel32.lib /DLL /out:api-ms-win-core-localization-l1-2-2.dll || goto fail
 rem cl ..\..\mswin\handle\base.c /link kernel32.lib /DLL /out:api-ms-win-core-handle-l1-1-0.dll || goto fail
 
 del *.obj
