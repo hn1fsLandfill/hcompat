@@ -7,11 +7,12 @@
 #pragma comment(linker, "/export:CompareObjectHandles=e_CompareObjectHandles")
 #endif
 
-// return false for now; TODO
+// maybe find a better way to check?
 BOOL e_CompareObjectHandles(
   HANDLE hFirstObjectHandle,
   HANDLE hSecondObjectHandle
 ) {
+  if(hFirstObjectHandle == hSecondObjectHandle) return TRUE;
   return FALSE;
 }
 
