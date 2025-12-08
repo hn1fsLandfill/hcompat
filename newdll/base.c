@@ -1,5 +1,3 @@
-#define WINUSERAPI __declspec(dllexport)
-#define WINBASEAPI __declspec(dllexport)
 #include <windows.h>
 #include "exports.h"
 

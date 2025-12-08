@@ -3,7 +3,12 @@
 #include <windows.h>
 #include "exports.h"
 
-WINBASEAPI VOID QueryUnbiasedInterruptTimePrecise(
+#ifndef _M_X64
+#pragma comment(linker, "/export:QueryUnbiasedInterruptTimePrecise=_e_QueryUnbiasedInterruptTimePrecise")
+#else
+#pragma comment(linker, "/export:QueryUnbiasedInterruptTimePrecise=e_QueryUnbiasedInterruptTimePrecise")
+#endif
+VOID e_QueryUnbiasedInterruptTimePrecise(
   PULONGLONG lpUnbiasedInterruptTimePrecise
 ) {
     QueryUnbiasedInterruptTime(lpUnbiasedInterruptTimePrecise);

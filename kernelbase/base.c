@@ -1,10 +1,14 @@
-#define WINUSERAPI __declspec(dllexport)
-#define WINBASEAPI __declspec(dllexport)
 #include <windows.h>
 #include "exports.h"
 
+#ifndef _M_X64
+#pragma comment(linker, "/export:CompareObjectHandles=_e_CompareObjectHandles")
+#else
+#pragma comment(linker, "/export:CompareObjectHandles=e_CompareObjectHandles")
+#endif
+
 // return false for now; TODO
-WINBASEAPI BOOL CompareObjectHandles(
+BOOL e_CompareObjectHandles(
   HANDLE hFirstObjectHandle,
   HANDLE hSecondObjectHandle
 ) {

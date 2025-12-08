@@ -1,85 +1,92 @@
-#define WINUSERAPI __declspec(dllexport)
 #include <windows.h>
 #include "exports.h"
 
 // #pragma comment(linker, "/export:SystemParametersInfoForDpi=kernelbase.SystemParametersInfoW")
 
-WINUSERAPI BOOL IsWindowArranged(HWND hwnd) {
+BOOL e_IsWindowArranged(HWND hwnd) {
     return FALSE;
 }
 
 // wtf x86 msvc
 #ifndef _M_X64
 #pragma comment(linker, "/export:GetDpiForWindow=_e_GetDpiForWindow")
-__declspec(dllexport) UINT e_GetDpiForWindow(HWND hwnd) {
 #else
-__declspec(dllexport) UINT GetDpiForWindow(HWND hwnd) {
+#pragma comment(linker, "/export:GetDpiForWindow=e_GetDpiForWindow")
 #endif
+
+UINT e_GetDpiForWindow(HWND hwnd) {
     return DPI_AWARENESS_UNAWARE;
 }
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:GetWindowDpiAwarenessContext=_e_GetWindowDpiAwarenessContext")
-__declspec(dllexport) DPI_AWARENESS_CONTEXT e_GetWindowDpiAwarenessContext(HWND hwnd) {
 #else
-__declspec(dllexport) DPI_AWARENESS_CONTEXT GetWindowDpiAwarenessContext(HWND hwnd) {
+#pragma comment(linker, "/export:GetWindowDpiAwarenessContext=e_GetWindowDpiAwarenessContext")
 #endif
+DPI_AWARENESS_CONTEXT e_GetWindowDpiAwarenessContext(HWND hwnd) {
     return DPI_AWARENESS_UNAWARE;
 }
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:SetThreadDpiAwarenessContext=_e_SetThreadDpiAwarenessContext")
-__declspec(dllexport) DPI_AWARENESS_CONTEXT  e_SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiContext) {
 #else
-__declspec(dllexport) DPI_AWARENESS_CONTEXT  SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiContext) {
+#pragma comment(linker, "/export:SetThreadDpiAwarenessContext=e_SetThreadDpiAwarenessContext")
 #endif
+
+DPI_AWARENESS_CONTEXT e_SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiContext) {
     return DPI_AWARENESS_UNAWARE;
 }
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:IsValidDpiAwarenessContext=_e_IsValidDpiAwarenessContext")
-__declspec(dllexport) BOOL e_IsValidDpiAwarenessContext(DPI_AWARENESS_CONTEXT value) {
 #else
-__declspec(dllexport) BOOL IsValidDpiAwarenessContext(DPI_AWARENESS_CONTEXT value) {
+#pragma comment(linker, "/export:IsValidDpiAwarenessContext=e_IsValidDpiAwarenessContext")
 #endif
+
+BOOL e_IsValidDpiAwarenessContext(DPI_AWARENESS_CONTEXT value) {
     if(value == DPI_AWARENESS_UNAWARE) return TRUE;
     return FALSE;
 }
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:GetThreadDpiAwarenessContext=_e_GetThreadDpiAwarenessContext")
-__declspec(dllexport) DPI_AWARENESS_CONTEXT e_GetThreadDpiAwarenessContext() {
 #else
-__declspec(dllexport) DPI_AWARENESS_CONTEXT GetThreadDpiAwarenessContext() {
+#pragma comment(linker, "/export:GetThreadDpiAwarenessContext=e_GetThreadDpiAwarenessContext")
 #endif
+
+DPI_AWARENESS_CONTEXT e_GetThreadDpiAwarenessContext() {
     return DPI_AWARENESS_UNAWARE;
 }
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:EnableNonClientDpiScaling=_e_EnableNonClientDpiScaling")
-__declspec(dllexport) BOOL e_EnableNonClientDpiScaling(HWND hwnd) {
 #else
-__declspec(dllexport) BOOL EnableNonClientDpiScaling(HWND hwnd) {
+#pragma comment(linker, "/export:EnableNonClientDpiScaling=e_EnableNonClientDpiScaling")
 #endif
+
+BOOL e_EnableNonClientDpiScaling(HWND hwnd) {
     return TRUE;
 }
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:AreDpiAwarenessContextsEqual=_e_AreDpiAwarenessContextsEqual")
-__declspec(dllexport) BOOL e_AreDpiAwarenessContextsEqual(DPI_AWARENESS_CONTEXT dpiContextA, DPI_AWARENESS_CONTEXT dpiContextB) {
 #else
-__declspec(dllexport) BOOL AreDpiAwarenessContextsEqual(DPI_AWARENESS_CONTEXT dpiContextA, DPI_AWARENESS_CONTEXT dpiContextB) {
+#pragma comment(linker, "/export:SystemParametersInfoForDpi=e_SystemParametersInfoForDpi")
 #endif
+
+BOOL e_AreDpiAwarenessContextsEqual(DPI_AWARENESS_CONTEXT dpiContextA, DPI_AWARENESS_CONTEXT dpiContextB) {
+    // todo: find a more proper way?
     if(dpiContextA == dpiContextB) return TRUE;
     return FALSE;
 }
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:SystemParametersInfoForDpi=_e_SystemParametersInfoForDpi")
-__declspec(dllexport) BOOL e_SystemParametersInfoForDpi(
 #else
-__declspec(dllexport) BOOL SystemParametersInfoForDpi(
+#pragma comment(linker, "/export:SystemParametersInfoForDpi=e_SystemParametersInfoForDpi")
 #endif
+
+BOOL e_SystemParametersInfoForDpi(
   UINT  uiAction,
   UINT  uiParam,
   PVOID pvParam,
@@ -91,10 +98,11 @@ __declspec(dllexport) BOOL SystemParametersInfoForDpi(
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:GetSystemMetricsForDpi=_e_GetSystemMetricsForDpi")
-__declspec(dllexport) int e_GetSystemMetricsForDpi(
 #else
-__declspec(dllexport) int GetSystemMetricsForDpi(
+#pragma comment(linker, "/export:GetSystemMetricsForDpi=e_GetSystemMetricsForDpi")
 #endif
+
+int e_GetSystemMetricsForDpi(
   int  nIndex,
   UINT dpi
 ) {
@@ -103,10 +111,11 @@ __declspec(dllexport) int GetSystemMetricsForDpi(
 
 #ifndef _M_X64
 #pragma comment(linker, "/export:AdjustWindowRectExForDpi=_e_AdjustWindowRectExForDpi")
-__declspec(dllexport) BOOL e_AdjustWindowRectExForDpi(
 #else
-__declspec(dllexport) BOOL AdjustWindowRectExForDpi(
+#pragma comment(linker, "/export:AdjustWindowRectExForDpi=e_AdjustWindowRectExForDpi")
 #endif
+
+BOOL e_AdjustWindowRectExForDpi(
    LPRECT lpRect,
    DWORD  dwStyle,
    BOOL   bMenu,
@@ -122,15 +131,13 @@ __declspec(dllexport) BOOL AdjustWindowRectExForDpi(
 #else
 #pragma comment(linker, "/export:SetDialogDpiChangeBehavior=e_SetDialogDpiChangeBehavior")
 #endif
-__declspec(dllexport) BOOL e_SetDialogDpiChangeBehavior(
+BOOL e_SetDialogDpiChangeBehavior(
     HWND                        hDlg,
     DIALOG_DPI_CHANGE_BEHAVIORS mask,
     DIALOG_DPI_CHANGE_BEHAVIORS values
 ) {
     return TRUE;
 }
-// #pragma comment(linker, "/export:SetDialogDpiChangeBehavior=SetDialogDpiChangeBehavior_extend")
-
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  reason, LPVOID lpReserved)
 {

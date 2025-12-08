@@ -1,14 +1,27 @@
-#define WINUSERAPI __declspec(dllexport)
-#define WINBASEAPI __declspec(dllexport)
+#define WINUSERAPI
+#define WINBASEAPI
 #include <windows.h>
 #include "exports.h"
 
-WINBASEAPI HRESULT NetGetAadJoinInformation(LPCWSTR pcszTenantId, void **ppJoinInfo) {
+// todo: turn this into a macro?
+#ifndef _M_X64
+#pragma comment(linker, "/export:NetGetAadJoinInformation=_e_NetGetAadJoinInformation")
+#else
+#pragma comment(linker, "/export:NetGetAadJoinInformation=e_NetGetAadJoinInformation")
+#endif
+
+HRESULT e_NetGetAadJoinInformation(LPCWSTR pcszTenantId, void **ppJoinInfo) {
     *ppJoinInfo = NULL;
     return S_OK;
 }
 
-WINUSERAPI VOID NetFreeAadJoinInformation(void *pJoinInfo) {
+#ifndef _M_X64
+#pragma comment(linker, "/export:NetFreeAadJoinInformation=_e_NetFreeAadJoinInformation")
+#else
+#pragma comment(linker, "/export:NetFreeAadJoinInformation=e_NetFreeAadJoinInformation")
+#endif
+
+VOID e_NetFreeAadJoinInformation(void *pJoinInfo) {
     // just a bland stub
 }
 
