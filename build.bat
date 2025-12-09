@@ -3,6 +3,8 @@ cd out
 mkdir %VSCMD_ARG_TGT_ARCH%
 cd %VSCMD_ARG_TGT_ARCH%
 
+cl /I ..\..\common ..\..\patcher\base.c /link ntdll.lib /DLL /out:hpatcher.dll || goto fail
+
 cl /I ..\..\common ..\..\core\kernel32\base.c /link kernel32.lib /DLL /out:hernel32.dll || goto fail
 cl /I ..\..\common ..\..\core\user32\base.c /link user32.lib /DLL /out:hser32.dll || goto fail
 cl /I ..\..\common ..\..\core\netapi32\base.c /link netapi32.lib /DLL /out:hetapi32.dll || goto fail
