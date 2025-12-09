@@ -19,6 +19,7 @@ HRESULT e_RoGetActivationFactory(
     MessageBoxW(NULL, h, L"iid request", 0);
     CoTaskMemFree(h);
     #endif
+    // block iactivationfactory requests for now
     if(IsEqualIID(&IID_IActivationFactory,iid)) {
         return E_NOINTERFACE;
     }
@@ -37,7 +38,7 @@ HRESULT e_RoActivateInstance(
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  reason, LPVOID lpReserved)
 {
     if (reason == DLL_PROCESS_ATTACH) {
-        
+
     }
     return TRUE;
 }
