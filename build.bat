@@ -9,6 +9,7 @@ cl /I ..\..\common ..\..\core\netapi32\base.c /link netapi32.lib /DLL /out:hetap
 cl /I ..\..\common ..\..\core\kernelbase\base.c /link kernel32.lib /DLL /out:hernelbase.dll || goto fail
 cl /I ..\..\common ..\..\core\comctl32\base.c /link comctl32.lib /DLL /out:homctl32.dll || goto fail
 cl /I ..\..\common ..\..\winrt\uiautomationcore\base.c /link uiautomationcore.lib /DLL /out:HIAutomationCore.dll || goto fail
+cl /I ..\..\common ..\..\winrt\combase\base.c /link mincore.lib user32.lib /DLL /out:hombase.dll || goto fail
 cl /I ..\..\common ..\..\dx\dcomp\base.c /link dcomp.lib /DLL /out:hcomp.dll || goto fail
 
 cl /I ..\..\common ..\..\mswin\version\base.c /link version.lib /DLL /out:api-ms-win-core-version-l1-1-1.dll || goto fail
