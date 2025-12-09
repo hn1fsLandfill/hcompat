@@ -1,0 +1,1 @@
+#pragma comment(linker, "/export:GetNamedPipeInfo=kernel32.GetNamedPipeInfo,@7")

@@ -1,1 +1,1 @@
-// TODO
+#pragma comment(linker, "/export:LocalFree=kernel32.LocalFree,@10")
