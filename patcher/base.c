@@ -1,6 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "verifier.h"
+#include "pe.h"
 
 typedef void (*MessageBoxA_t)(HWND, LPCSTR, LPCSTR, UINT);
 
@@ -28,14 +29,25 @@ static RTL_VERIFIER_PROVIDER_DESCRIPTOR provider = {
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  reason, PRTL_VERIFIER_PROVIDER_DESCRIPTOR *lpReserved)
 {
     if(reason == DLL_VERIFIER_LOAD) {
-        DbgPrint("hpatcher verifier startup\n");
+        DbgPrint("hpatcher verifier startup\r\n");
+        patchCurrentProcess();
         *lpReserved = &provider;
     }
     if(reason == DLL_PROCESS_ATTACH) {
-        HMODULE user32 = LoadLibraryA("user32.dll");
-        MessageBoxA_t MessageBoxA_r = (MessageBoxA_t)GetProcAddress(user32, "MessageBoxA");
-        MessageBoxA_r(NULL, "hcompat has loaded into the process!!! :steamhappy:", "hcompat", 0);
-        FreeLibrary(user32);
+        // FIXME: maybe use the systemroot variable here and account for WOW64?
+        DbgPrint("adding hcompats directory to dll search path\r\n");
+        #ifndef _M_X64
+        if(!SetDllDirectoryA("C:\\Windows\\hcompat")) {
+        #else
+        if(!SetDllDirectoryA("C:\\Windows\\hcompat-x64")) {
+        #endif
+            DWORD result = GetLastError();
+            DbgPrint("oops - 0x%x 0x%x\r\n", result, HRESULT_FROM_WIN32(result));
+        }
+        // HMODULE user32 = LoadLibraryA("user32.dll");
+        // MessageBoxA_t MessageBoxA_r = (MessageBoxA_t)GetProcAddress(user32, "MessageBoxA");
+        // MessageBoxA_r(NULL, "hcompat has loaded into the process!!! :steamhappy:", "hcompat", 0);
+        // FreeLibrary(user32);
     }
     return TRUE;
 }
