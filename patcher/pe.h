@@ -12,28 +12,12 @@
     } \
 }
 
-void patchCurrentProcess() {
-    PEB *currentPeb = NtCurrentPeb();
-    LIST_ENTRY *ldrHead = &currentPeb->Ldr->InMemoryOrderModuleList;
-    DbgPrint("hpatcher: Patching process..\n\r");
-    DbgPrint("hpatcher: ldr field is 0x%lx\n\r", currentPeb->Ldr);
-
-    //currentPeb->BeingDebugged = 0x00;
-    //DbgPrint("hpatcher: Hid debugger in PEB\n\r");
-
-    // Maybe clean up this mess later?
-
-    LIST_ENTRY *currentLdrEntry = ldrHead->Flink;
-    LDR_DATA_TABLE_ENTRY* ldr = (LDR_DATA_TABLE_ENTRY*) ((char*)currentLdrEntry-sizeof(LIST_ENTRY));
-    DWORD dllSize = (DWORD)(ldr->Reserved3[1]);
-    void *dllBase = ldr->DllBase;
-
+void patchImage(void *dllBase, DWORD dllSize) {
+    DbgPrint("hpatcher: patching image at %lx (%u bytes)\r\n", dllBase, dllSize);
     IMAGE_DOS_HEADER* dos_header  = (IMAGE_DOS_HEADER*)dllBase;
     IMAGE_NT_HEADERS* pe_header = (IMAGE_NT_HEADERS*) (((char*) dos_header) + dos_header->e_lfanew);
     IMAGE_IMPORT_DESCRIPTOR *import =
         (IMAGE_IMPORT_DESCRIPTOR *)( ((char *) dllBase) + pe_header->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress );
-
-    DbgPrint("hpatcher: exe's name is %ls (base: 0x%lx size: 0x%x)\r\n", ldr->FullDllName.Buffer, ldr->DllBase, dllSize);
 
     while(import->Name != 0) {
         DbgPrint("hpatcher: import at %lx\n\r", import );
@@ -77,4 +61,44 @@ void patchCurrentProcess() {
         DbgPrint("hpatcher: exe imports %s\n\r", dllName);
         import++;
     }
+}
+
+void patchCurrentProcess() {
+    PEB *currentPeb = NtCurrentPeb();
+    LIST_ENTRY *ldrHead = &currentPeb->Ldr->InMemoryOrderModuleList;
+    DbgPrint("hpatcher: Patching process..\n\r");
+    DbgPrint("hpatcher: ldr field is 0x%lx\n\r", currentPeb->Ldr);
+
+    //currentPeb->BeingDebugged = 0x00;
+    //DbgPrint("hpatcher: Hid debugger in PEB\n\r");
+
+    // Maybe clean up this mess later?
+
+    LIST_ENTRY *currentLdrEntry = ldrHead->Flink;
+    LDR_DATA_TABLE_ENTRY* ldr = (LDR_DATA_TABLE_ENTRY*) ((char*)currentLdrEntry-sizeof(LIST_ENTRY));
+    DWORD dllSize = (DWORD)(ldr->Reserved3[1]);
+    void *dllBase = ldr->DllBase;
+
+    DbgPrint("hpatcher: exe's name is %ls (base: 0x%lx size: 0x%x)\r\n", ldr->FullDllName.Buffer, dllBase, dllSize);
+
+    patchImage(dllBase, dllSize);
+}
+
+void NTAPI loadCallback(PWSTR DllName, PVOID DllBase, SIZE_T DllSize, PVOID Reserved) {
+    char path[MAX_PATH];
+
+    if (GetModuleFileName(DllBase, path, sizeof(path)) == 0) {
+        DWORD result = GetLastError();
+        DbgPrint("hpatcher: oopsie while obtaining path of dll - %x\n", HRESULT_FROM_WIN32(result));
+        DebugBreak();
+        return;
+    }
+
+    DbgPrint("loaded %s\n\r", path);
+    // skip anything windows related (this includes hcompat stuff too)
+    if(strnicmp("C:\\Windows", path, 10) == 0) {
+        return;
+    }
+
+    patchImage(DllBase, DllSize);
 }

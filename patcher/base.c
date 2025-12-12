@@ -9,10 +9,6 @@ static RTL_VERIFIER_DLL_DESCRIPTOR provider_hooks[] = {
     {NULL, 0, NULL, NULL},
 };
 
-void NTAPI loadCallback(PWSTR DllName, PVOID DllBase, SIZE_T DllSize, PVOID Reserved) {
-    DbgPrint("loaded %ws\n\r", DllName);
-}
-
 static RTL_VERIFIER_PROVIDER_DESCRIPTOR provider = {
     .Length = sizeof(RTL_VERIFIER_PROVIDER_DESCRIPTOR),
     .ProviderDlls = provider_hooks,
