@@ -42,7 +42,13 @@ void patchImage(void *dllBase, DWORD dllSize) {
         }
 
         REDIRECT_DLL("kernel32.dll", 'h');
+        REDIRECT_DLL("kernelbase.dll", 'h');
         REDIRECT_DLL("user32.dll", 'h');
+        REDIRECT_DLL("dcomp.dll", 'h');
+        REDIRECT_DLL("netapi32.dll", 'h');
+        REDIRECT_DLL("UIAutomationCore.dll", 'h');
+        REDIRECT_DLL("combase.dll", 'h');
+        REDIRECT_DLL("comctl32.dll", 'h');
 
         DbgPrint("hpatcher: reverting protections back\r\n");
         result = VirtualProtect(
@@ -63,6 +69,8 @@ void patchImage(void *dllBase, DWORD dllSize) {
     }
 }
 
+void *processBase = NULL;
+
 void patchCurrentProcess() {
     PEB *currentPeb = NtCurrentPeb();
     LIST_ENTRY *ldrHead = &currentPeb->Ldr->InMemoryOrderModuleList;
@@ -81,11 +89,15 @@ void patchCurrentProcess() {
 
     DbgPrint("hpatcher: exe's name is %ls (base: 0x%lx size: 0x%x)\r\n", ldr->FullDllName.Buffer, dllBase, dllSize);
 
+    processBase = dllBase;
+
     patchImage(dllBase, dllSize);
 }
 
-void NTAPI loadCallback(PWSTR DllName, PVOID DllBase, SIZE_T DllSize, PVOID Reserved) {
+void NTAPI loadCallbackAV(PWSTR DllName, PVOID DllBase, SIZE_T DllSize, PVOID Reserved) {
     char path[MAX_PATH];
+
+    if(DllBase == processBase) return;
 
     if (GetModuleFileName(DllBase, path, sizeof(path)) == 0) {
         DWORD result = GetLastError();
@@ -101,4 +113,29 @@ void NTAPI loadCallback(PWSTR DllName, PVOID DllBase, SIZE_T DllSize, PVOID Rese
     }
 
     patchImage(DllBase, DllSize);
+}
+
+void NTAPI loadNotificationCallback(ULONG NotificationReason, PCLDR_DLL_NOTIFICATION_DATA NotificationData, PVOID Context) {
+    // dll loaded notification
+    if(NotificationReason == 1) {
+        char path[MAX_PATH];
+
+        PVOID dllBase = NotificationData->Loaded.DllBase;
+        DWORD dllSize = NotificationData->Loaded.SizeOfImage;
+
+        if(dllBase == processBase) return;
+
+        if (GetModuleFileName(dllBase, path, sizeof(path)) == 0) {
+            DWORD result = GetLastError();
+            DbgPrint("hpatcher: oopsie while obtaining path of dll - %x\n", HRESULT_FROM_WIN32(result));
+            DebugBreak();
+            return;
+        }
+
+        DbgPrint("loaded %s\n\r", path);
+
+        if(strnicmp("C:\\Windows", path, 10) == 0) return;
+
+        patchImage(dllBase, dllSize);
+    }
 }

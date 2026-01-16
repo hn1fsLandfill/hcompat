@@ -1,0 +1,49 @@
+typedef struct _LDR_DLL_LOADED_NOTIFICATION_DATA
+{
+    ULONG Flags;
+    struct _UNICODE_STRING *FullDllName;
+    struct _UNICODE_STRING *BaseDllName;
+    PVOID DllBase;
+    ULONG SizeOfImage;
+} LDR_DLL_LOADED_NOTIFICATION_DATA, *PLDR_DLL_LOADED_NOTIFICATION_DATA;
+
+typedef struct _LDR_DLL_UNLOADED_NOTIFICATION_DATA
+{
+    ULONG Flags;
+    const struct _UNICODE_STRING *FullDllName;
+    const struct _UNICODE_STRING *BaseDllName;
+    PVOID DllBase;
+    ULONG SizeOfImage;
+} LDR_DLL_UNLOADED_NOTIFICATION_DATA, *PLDR_DLL_UNLOADED_NOTIFICATION_DATA;
+
+typedef union _LDR_DLL_NOTIFICATION_DATA
+{
+    LDR_DLL_LOADED_NOTIFICATION_DATA Loaded;
+    LDR_DLL_UNLOADED_NOTIFICATION_DATA Unloaded;
+} LDR_DLL_NOTIFICATION_DATA, *PLDR_DLL_NOTIFICATION_DATA;
+
+typedef const LDR_DLL_NOTIFICATION_DATA *PCLDR_DLL_NOTIFICATION_DATA;
+
+typedef VOID (NTAPI *LDR_DLL_NOTIFICATION_FUNCTION)(
+    ULONG NotificationReason,
+    PCLDR_DLL_NOTIFICATION_DATA NotificationData,
+    PVOID Context
+);
+
+typedef struct _DBG_LDRP_DLL_NOTIFICATION_BLOCK {
+	LIST_ENTRY Links;
+	LDR_DLL_NOTIFICATION_FUNCTION *NotificationFunction;
+	PVOID Context;
+} DBG_LDRP_DLL_NOTIFICATION_BLOCK, * PDBG_LDRP_DLL_NOTIFICATION_BLOCK;
+
+
+typedef DWORD (NTAPI *LdrRegisterDllNotification_t)(
+  unsigned long Flags,
+  LDR_DLL_NOTIFICATION_FUNCTION *NotificationFunction,
+  void *Context,
+  void **Cookie
+);
+
+typedef DWORD (NTAPI *LdrUnregisterDllNotification_t)(
+  void *Cookie
+);
