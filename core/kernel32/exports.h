@@ -674,7 +674,7 @@
 #pragma comment(linker, "/export:GetPrivateProfileStringW=kernel32.GetPrivateProfileStringW,@674")
 #pragma comment(linker, "/export:GetPrivateProfileStructA=kernel32.GetPrivateProfileStructA,@675")
 #pragma comment(linker, "/export:GetPrivateProfileStructW=kernel32.GetPrivateProfileStructW,@676")
-#pragma comment(linker, "/export:GetProcAddress=kernel32.GetProcAddress,@677")
+//#pragma comment(linker, "/export:GetProcAddress=kernel32.GetProcAddress,@677")
 #pragma comment(linker, "/export:GetProcessAffinityMask=kernel32.GetProcessAffinityMask,@678")
 #pragma comment(linker, "/export:GetProcessDEPPolicy=kernel32.GetProcessDEPPolicy,@679")
 #pragma comment(linker, "/export:GetProcessGroupAffinity=kernel32.GetProcessGroupAffinity,@680")
