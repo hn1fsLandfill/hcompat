@@ -4,6 +4,9 @@
 #include "ldr.h"
 #include "pe.h"
 
+// enable for now
+//#define useAVCallback
+
 typedef void (*MessageBoxA_t)(HWND, LPCSTR, LPCSTR, UINT);
 typedef void (*ShellMessageBoxA_t)(HINSTANCE, HWND, LPCSTR, LPCSTR, UINT, ...);
 
@@ -14,7 +17,11 @@ static RTL_VERIFIER_DLL_DESCRIPTOR provider_hooks[] = {
 static RTL_VERIFIER_PROVIDER_DESCRIPTOR provider = {
     .Length = sizeof(RTL_VERIFIER_PROVIDER_DESCRIPTOR),
     .ProviderDlls = provider_hooks,
+    #ifdef useAVCallback
+    .ProviderDllLoadCallback = loadCallbackAV,
+    #else
     .ProviderDllLoadCallback = NULL,
+    #endif
     .ProviderDllUnloadCallback = NULL,
     .VerifierImage = NULL,
     .VerifierFlags = 0,
@@ -24,8 +31,7 @@ static RTL_VERIFIER_PROVIDER_DESCRIPTOR provider = {
     .ProviderNtdllHeapFreeCallback = NULL,
 };
 
-static DBG_LDRP_DLL_NOTIFICATION_BLOCK dllLoadHook;
-
+#ifndef useAVCallback
 void hookLoadCallback() {
     DbgPrint("hpatcher: registering dll load hook\r\n");
     HMODULE ntdll = LoadLibraryA("ntdll.dll");
@@ -33,27 +39,28 @@ void hookLoadCallback() {
         (LdrRegisterDllNotification_t)GetProcAddress(ntdll, "LdrRegisterDllNotification");
     LdrUnregisterDllNotification_t LdrUnregisterDllNotification =
         (LdrUnregisterDllNotification_t)GetProcAddress(ntdll, "LdrUnregisterDllNotification");
-    void *loadCookie;
+    DBG_LDRP_DLL_NOTIFICATION_BLOCK *loadCookie;
     DWORD ret = LdrRegisterDllNotification(0, loadNotificationCallback, NULL, &loadCookie);
     if(ret) {
         DbgPrint("hpatcher failed to register dll notification :( %x\r\n",ret);
         DebugBreak();
     }
 }
+#endif
 
 #define HCOMPAT_WOW64_ERROR_MSG "hcompat does not support WOW64 processes currently.\n\n" \
     "Your program may or may not work unless you manually patch it to use hcompat."
-
-// enable for now
-#define useAVCallback TRUE
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  reason, PRTL_VERIFIER_PROVIDER_DESCRIPTOR *lpReserved)
 {
     if(reason == DLL_VERIFIER_LOAD) {
         DbgPrint("hpatcher verifier startup\r\n");
         patchCurrentProcess();
-        if(useAVCallback) provider.ProviderDllLoadCallback = loadCallbackAV;
-        else hookLoadCallback();
+        #ifdef useAVCallback
+        DbgPrint("Using AV callback for dll load callbacks\r\n");
+        #else
+        hookLoadCallback();
+        #endif
         *lpReserved = &provider;
     }
     if(reason == DLL_PROCESS_ATTACH) {
