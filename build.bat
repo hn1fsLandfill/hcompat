@@ -8,12 +8,13 @@ cl /I ..\..\common ..\..\patcher\base.c /link ntdll.lib /DLL /out:hpatcher.dll |
 cl /I ..\..\common ..\..\core\kernel32\base.c /link kernel32.lib ntdll.lib /DLL /out:hernel32.dll || goto fail
 cl /I ..\..\common ..\..\core\user32\base.c /link user32.lib /DLL /out:hser32.dll || goto fail
 cl /I ..\..\common ..\..\core\netapi32\base.c /link netapi32.lib /DLL /out:hetapi32.dll || goto fail
-cl /I ..\..\common ..\..\core\kernelbase\base.c /link kernel32.lib /DLL /out:hernelbase.dll || goto fail
+cl /I ..\..\common ..\..\core\kernelbase\base.c /link kernel32.lib ntdll.lib /DLL /out:hernelbase.dll || goto fail
 cl /I ..\..\common ..\..\core\comctl32\base.c /link comctl32.lib /DLL /out:homctl32.dll || goto fail
 cl /I ..\..\common ..\..\winrt\uiautomationcore\base.c /link uiautomationcore.lib /DLL /out:HIAutomationCore.dll || goto fail
 cl /I ..\..\common ..\..\winrt\combase\base.c /link mincore.lib user32.lib /DLL /out:hombase.dll || goto fail
 cl /I ..\..\common ..\..\dx\dcomp\base.c /link dcomp.lib /DLL /out:hcomp.dll || goto fail
 
+cl /I ..\..\common ..\..\mswin\appmodel-runtime\base.c /link kernel32.lib ntdll.lib /DLL /out:api-ms-win-appmodel-runtime-l1-1-2.dll || goto fail
 cl /I ..\..\common ..\..\mswin\version\base.c /link version.lib /DLL /out:api-ms-win-core-version-l1-1-1.dll || goto fail
 cl /I ..\..\common ..\..\mswin\libraryloader\base.c /link kernel32.lib /DLL /out:api-ms-win-core-libraryloader-l1-1-1.dll || goto fail
 copy api-ms-win-core-libraryloader-l1-1-1.dll api-ms-win-core-libraryloader-l1-2-1.dll || goto fail
